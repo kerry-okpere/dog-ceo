@@ -3,9 +3,6 @@
 		<Search v-model="search" @keydown.enter="handleSearch"/> 
 		<button>Reload</button>
     <p>Sort By:</p>
-		<!-- load all breed -->
-		<!-- select dog by breed name -->
-		<!-- select dong by subBreed name -->
     <Select :modelValue="selectedBreed" @update:modelValue="fetchByBreed" :options="breed" title="Breed"/>
     <Select :modelValue="selectedSubBreed" @update:modelValue="fetchBySubBreed" :options="subBreed" title="Sub Breed"/>
 	</Header>
@@ -19,7 +16,7 @@
 		<Loading v-if="loading"/>
 		<div v-else>
 			<div v-if="dogs.length">
-				<Card :img="img.url" :name="img.altText" v-for="(img, i) in dogs" :key="i"/>
+				<Card :info="getId(img.url)" :img="img.url" :name="img.altText" v-for="(img, i) in dogs" :key="i"/>
 			</div>
 			<div v-else>
 				No Dog's available
@@ -41,6 +38,7 @@ import Loading from "/src/components/Loading/index.vue";
 import Card from "/src/components/Card/index.vue";
 import Search from "/src/components/Search/index.vue";
 import Select from "/src/components/Select/index.vue";
+import { getId } from '../Utilities/index';
 
 // data
 const store = useStore()
@@ -99,7 +97,10 @@ const handleFetch = (action, data) => {
 const fetchByBreed = async (breed) => {
 	selectedBreed.value = breed
 
-	handleFetch('fetchByBreed', breed)
+	handleFetch('fetchByBreed', {
+		breed: selectedBreed.value ,
+		length: 100
+	})
 }
 
 const fetchBySubBreed = async (subBreed) => {
