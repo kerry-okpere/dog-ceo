@@ -44,7 +44,7 @@ export default createStore({
     },
     fetchByBreed({ commit }, data){
       return new Promise((resolve, reject) => {
-        axios.get(`https://dog.ceo/api/breed/${data}/images/random/100/alt`).then(response => {
+        axios.get(`https://dog.ceo/api/breed/${data.breed}/images/random/${data.length}/alt`).then(response => {
           commit('SET_DOG_LIST', response.data.message)
           resolve(response);
         }).catch(error => {
