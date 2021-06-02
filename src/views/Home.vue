@@ -63,8 +63,8 @@ const subBreed = computed(() => {
 
 // hooks
 onMounted(() => {
-	fetchDogs()
-	fetchBreed()
+	handleFetch('fetchDogs')
+	handleFetch('fetchBreed')
 })
 
 // methods
@@ -96,78 +96,19 @@ const handleFetch = (action, data) => {
 	})
 }
 
-const fetchDogs = async () => {
-	handleFetch('fetchDogs', {})
-	// loading.value = true
-
-	// store.dispatch('fetchDogs').then(res => {
-	// 	loading.value = false
-	// }).catch(err => {
-	// 	isError.value = {
-	// 		show: true,
-	// 		msg: 'We encountered an issue while fetch the data, Please try again later.'
-	// 	}
-	// 	loading.value = false
-	// })
-}
-
-const fetchBreed = async (breed) => {
-
-	handleFetch('fetchBreed', {})
-	// loading.value = true
-
-	// store.dispatch('fetchBreed').then(res => {
-	// 	loading.value = false
-	// }).catch(err => {
-	// 	isError.value = {
-	// 		show: true,
-	// 		msg: 'We encountered an issue while fetch the data, Please try again later.'
-	// 	}
-	// 	loading.value = false
-	// })
-}
-
 const fetchByBreed = async (breed) => {
-
 	selectedBreed.value = breed
 
 	handleFetch('fetchByBreed', breed)
-
-	// loading.value = true
-
-	// store.dispatch('fetchByBreed', breed).then(res => {
-	// 	loading.value = false
-	// }).catch(err => {
-	// 	isError.value = {
-	// 		show: true,
-	// 		msg: 'We encountered an issue while fetch the data, Please try again later.'
-	// 	}
-	// 	loading.value = false
-	// })
 }
 
 const fetchBySubBreed = async (subBreed) => {
-	
 	selectedSubBreed.value = subBreed
 
 	handleFetch('fetchBySubBreed', {
 		breed: selectedBreed.value, 
 		subBreed: subBreed
 	})
-	// loading.value = true
-	// store.dispatch('fetchBySubBreed', {
-	// 	breed: selectedBreed.value, 
-	// 	subBreed: subBreed
-	// 	})
-	// 	.then(res => {
-	// 		loading.value = false
-	// 	}).catch(err => {
-	// 		isError.value = {
-	// 		show: true,
-	// 		msg: 'We encountered an issue while fetch the data, Please try again later.'
-	// 	}
-	// 		loading.value = false
-	// 	})
 }
 
 
