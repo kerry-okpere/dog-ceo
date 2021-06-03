@@ -1,0 +1,87 @@
+.dog{
+  @apply
+    py-10 px-4 
+    md:px-8 lg:px-32;
+  &__nav{
+    @apply
+    flex justify-between; 
+    &-link{
+      @apply
+      inline-flex 
+    text-blue-500 
+      items-center;
+    }
+  }
+  &__nav-icon{
+    @apply 
+    mx-2 h-7 w-7;
+  }
+  &__nav-title{
+    @apply
+    text-2xl 
+  text-gray-400 
+    font-medium;
+  }
+  &__alert{
+    @apply
+      mx-auto
+      my-16;
+  }
+  &__detail{
+    @apply
+    rounded-md 
+    shadow-md 
+    border px-10;
+    &-info{
+      @apply
+      flex items-end
+      justify-center
+      my-10 flex-wrap;
+      img, div{
+        @apply mx-4;
+      }
+    }
+    &-item{
+      @apply 
+      flex items-center
+      justify-between 
+      border-b py-4;
+    }
+    &-label{
+      @apply 
+      h-6 w-6 p-2 flex
+      bg-blue-500 bg-opacity-30 
+      rounded-full 
+      items-center justify-center;
+      span{
+        @apply text-4xl;
+      }
+    }
+    &-heading{
+      @apply 
+      text-right text-gray-500;
+    }
+    &-breed{
+      @apply
+      capitalize 
+      text-lg 
+      text-blue-500 
+      text-right;
+    }
+  }
+  &__others{
+    &-cardGroup{
+      @apply 
+      my-3 -mx-3
+      flex flex-wrap
+      justify-center;
+    }
+    &-card{
+      @apply flex-1 m-3;
+    }
+    &-heading{
+      @apply 
+      text-xl text-gray-400;
+    }
+  }
+}
