@@ -3,10 +3,27 @@
   bg-gray-100
   rounded-md
   shadow-md
-  max-w-sm;
+  cursor-pointer
+  transition
+  border;
+  &:hover{
+    @apply
+    opacity-75;
+  }
+  &__small{
+    @apply max-w-small;
+    .card__content{
+      @apply h-32;
+    }
+  }
+  &__medium{
+    @apply max-w-sm;
+    .card__content{
+      @apply h-56;
+    }
+  }
   &__content{
     @apply 
-    h-56
     w-full
     bg-gray-400
     rounded-t-md;
@@ -21,7 +38,6 @@
   }
   &__title{
     @apply 
-    text-blue-500
     py-3
     px-6
     inline-block
@@ -32,5 +48,4 @@
       capitalize;
     }
   }
-
 }
