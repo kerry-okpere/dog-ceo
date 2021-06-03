@@ -14,13 +14,13 @@
 import { computed, ref } from "vue";
 import { InformationCircleIcon } from '@heroicons/vue/outline'
 import { ExclamationCircleIcon } from '@heroicons/vue/outline'
-import { checkCircleIcon } from '@heroicons/vue/outline'
+import { CheckCircleIcon } from '@heroicons/vue/outline'
 
 export default {
   components: { 
     'info-icon': InformationCircleIcon,
     'err-icon': ExclamationCircleIcon,
-    'success-icon': checkCircleIcon
+    'success-icon': CheckCircleIcon
   },
   props: {
     title: {
