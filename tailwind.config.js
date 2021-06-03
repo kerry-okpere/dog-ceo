@@ -18,6 +18,9 @@ module.exports = {
       },
       gridTemplateColumns: {
        'body': 'repeat(auto-fit, minmax(250px, 1fr))',
+      },
+      maxWidth: {
+        'small': '13rem'
       }
     },
   },
