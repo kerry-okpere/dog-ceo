@@ -16,29 +16,35 @@
 
 		<alert class="home__alert" title="Kindly note that this API can only display a maximum of 50 random pictures at a time, It can display up to 100 Dog Images when you query by breed." />
 		
-		<section class="home__body">
-			<div class="home__body-info">
-				<p>All Dogs</p>
-				<p class="text-gray-500 text-xs">{{dogs.length}} Dogs</p>
-			</div>
-			<loading class="home__body-loading" v-if="loading">
-				<p class="home__body-loading-txt">Loading all you favorite dog images🐩...</p>
-			</loading>
-			
-			<div v-else>
-				<div v-if="dogs.length" class="home__body-dogs">
-					<Card :info="getId(img.url)" :img="img.url" :name="img.altText" v-for="(img, i) in dogs" :key="i"/>
-				</div>
-				<div v-else class="home__body-empty">
-					<empty class="home__body-empty-icon"/>
-					<p>Oops, we couldn't find you any dog.</p>
-				</div>
-			</div>
+		<div v-if="isError.show" class="home__body-err">
+			<alert class="home__alert" variant="error" :title="isError.msg" />
+		</div>
 
-			<div v-if="isError" class="home__body-err">
-				<alert class="home__alert" variant="error" :title="isError.msg" />
+		<section v-else class="home__body">			
+			<div>
+				<div class="home__body-info">
+					<p>All Dogs</p>
+					<p class="text-gray-500 text-xs">{{dogs.length}} Dogs</p>
+				</div>
+
+				<loading class="home__body-loading" v-if="loading">
+					<p class="home__body-loading-txt">Loading all you favorite dog images🐩...</p>
+				</loading>
+				
+				<div v-else>
+					<div v-if="!isEmpty" class="home__body-dogs">
+						<Card :info="getId(img.url)" :img="img.url" :name="img.altText" v-for="(img, i) in dogs" :key="i"/>
+					</div>
+					<div v-else class="home__body-empty">
+						<empty class="home__body-empty-icon"/>
+						<p>Oops, we couldn't find you any dog.</p>
+					</div>
+				</div>
 			</div>
 		</section>
+		<div class="text-center pt-5">
+			<signed/>
+		</div>
 	</div>
 </template>
 
@@ -46,7 +52,6 @@
 // import Header from "/src/components/Header/index.vue";
 import { useStore } from "vuex";
 import { computed, ref, onMounted } from "vue";
-import axios from "axios";
 import Alert from "/src/components/Alert/index.vue";
 import Loading from "/src/components/Loading/index.vue";
 import Card from "/src/components/Card/index.vue";
@@ -55,6 +60,8 @@ import Select from "/src/components/Select/index.vue";
 import Btn from "/src/components/Btn/index.vue";
 import Empty from "/src/components/Icons/dog-house.vue";
 import { getId } from '../../Utilities/index.js';
+import Signed from "/src/components/Signature/index.vue";
+
 
 // data
 const store = useStore()
@@ -63,6 +70,7 @@ const isError = ref(false)
 const search = ref('')
 const selectedBreed = ref('')
 const selectedSubBreed = ref('')
+const isEmpty = ref(false)
 
 // computed property
 const dogs = computed({
@@ -101,6 +109,9 @@ const handleFetch = (action, data) => {
 
 	store.dispatch(action, data).then(res => {
 		loading.value = false
+
+		// after loading check if empty 
+		setTimeout(() => isEmpty.value = dogs.length, 3000);
 	}).catch(err => {
 		isError.value = {
 			show: true,
