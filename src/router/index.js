@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '/src/views/Home.vue'
-import Dog from '/src/views/Dog.vue';
+import Home from '/src/views/Home/index.vue'
+import Dog from '/src/views/Dog/index.vue';
+import NotFound from '/src/views/NotFound.vue';
+
 const routes = [
   {
     path: '/',
@@ -10,12 +12,9 @@ const routes = [
   { 
     path: '/dog/:id', 
     name: 'dog',
-    component: Dog 
-  }
-  // will match everything and put it under `$route.params.pathMatch`
-  // { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
-  // will match anything starting with `/user-` and put it under `$route.params.afterUser`
-  // { path: '/user-:afterUser(.*)', component: UserGeneric },
+    component: Dog,
+  },
+  { path: '/:afterUser(.*)', component: NotFound  },
 ]
 const router = createRouter({
   history: createWebHistory(),
