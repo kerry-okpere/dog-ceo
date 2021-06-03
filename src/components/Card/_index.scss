@@ -1,0 +1,36 @@
+.card{
+  @apply
+  bg-gray-100
+  rounded-md
+  shadow-md
+  max-w-sm;
+  &__content{
+    @apply 
+    h-56
+    w-full
+    bg-gray-400
+    rounded-t-md;
+    &-img{
+      @apply
+      h-full
+      w-full
+      object-cover
+      object-top
+      rounded-t-md;
+    }
+  }
+  &__title{
+    @apply 
+    text-blue-500
+    py-3
+    px-6
+    inline-block
+    w-full;
+    p{
+      @apply 
+      truncate
+      capitalize;
+    }
+  }
+
+}
