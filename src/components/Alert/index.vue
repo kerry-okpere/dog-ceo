@@ -1,6 +1,6 @@
 <template>
   <div :class="['flex py-4 px-12 justify-center space-x-6 items-center max-w-7xl rounded-sm', bgColor]">
-    <span :class="['h-6 w-16 sm:w-12 md:w-6 self-center',iconColor]">
+    <span :class="['h-6 w-8 sm:w-8 md:w-6 self-center',iconColor]">
       <slot>
         <success-icon v-if="variant === 'success'"/>
         <err-icon v-else-if="variant === 'error'"/>
