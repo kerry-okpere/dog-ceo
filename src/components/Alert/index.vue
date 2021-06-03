@@ -44,7 +44,6 @@ export default {
     const iconColor = ref(`text-${color.value}-600`)
     const bgColor = ref(`bg-${color.value}-100`)
 
-    console.log(iconColor.value, )
     return{
       iconColor,
       bgColor
