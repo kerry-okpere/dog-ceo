@@ -1,35 +1,49 @@
 <template>
-  <Header>
-		<Search v-model="search" @keydown.enter="handleSearch"/> 
-		<button>Reload</button>
-    <p>Sort By:</p>
-    <Select :modelValue="selectedBreed" @update:modelValue="fetchByBreed" :options="breed" title="Breed"/>
-    <Select :modelValue="selectedSubBreed" @update:modelValue="fetchBySubBreed" :options="subBreed" title="Sub Breed"/>
-	</Header>
-	<Alert title="Kindly note that this api only display a maximum of 50 pictures at a time and does not support Pagination" />
-	<section>
+	<div class="home">
+		<header class="home__header">
+			<div class="home__header-search">
+				<search v-model="search" @keydown.enter="handleSearch"/> 
+				<btn @click="handleFetch('fetchDogs')">Refresh</btn>
+			</div>
+			<div class="home__header-select">
+				<p>Sort By:</p>
+				<div>
+					<Select :modelValue="selectedBreed" @update:modelValue="fetchByBreed" :options="breed" title="Breed" class="home__header-selector"/>
+					<Select :modelValue="selectedSubBreed" @update:modelValue="fetchBySubBreed" :options="subBreed" title="Sub Breed" class="home__header-selector"/>
+				</div>
+			</div>
+		</header>
+
+		<alert class="home__alert" title="Kindly note that this API can only display a maximum of 50 random pictures at a time, It can display up to 100 Dog Images when you query by breed." />
 		
-		<div>
-			<p>All Dogs</p>
-			<p>{{dogs.length}} Dogs</p>
-		</div>
-		<Loading v-if="loading"/>
-		<div v-else>
-			<div v-if="dogs.length">
-				<Card :info="getId(img.url)" :img="img.url" :name="img.altText" v-for="(img, i) in dogs" :key="i"/>
+		<section class="home__body">
+			<div class="home__body-info">
+				<p>All Dogs</p>
+				<p class="text-gray-500 text-xs">{{dogs.length}} Dogs</p>
 			</div>
+			<loading class="home__body-loading" v-if="loading">
+				<p class="home__body-loading-txt">Loading all you favorite dog images🐩...</p>
+			</loading>
+			
 			<div v-else>
-				No Dog's available
+				<div v-if="dogs.length" class="home__body-dogs">
+					<Card :info="getId(img.url)" :img="img.url" :name="img.altText" v-for="(img, i) in dogs" :key="i"/>
+				</div>
+				<div v-else class="home__body-empty">
+					<empty class="home__body-empty-icon"/>
+					<p>Oops, we couldn't find you any dog.</p>
+				</div>
 			</div>
-		</div>
-		<div v-if="isError">
-			{{isError.msg}}
-		</div>
-	</section>
+
+			<div v-if="isError" class="home__body-err">
+				<alert class="home__alert" variant="error" :title="isError.msg" />
+			</div>
+		</section>
+	</div>
 </template>
 
 <script setup>
-import Header from "/src/components/Header/index.vue";
+// import Header from "/src/components/Header/index.vue";
 import { useStore } from "vuex";
 import { computed, ref, onMounted } from "vue";
 import axios from "axios";
@@ -38,7 +52,9 @@ import Loading from "/src/components/Loading/index.vue";
 import Card from "/src/components/Card/index.vue";
 import Search from "/src/components/Search/index.vue";
 import Select from "/src/components/Select/index.vue";
-import { getId } from '../Utilities/index';
+import Btn from "/src/components/Btn/index.vue";
+import Empty from "/src/components/Icons/dog-house.vue";
+import { getId } from '../../Utilities/index.js';
 
 // data
 const store = useStore()
@@ -115,5 +131,6 @@ const fetchBySubBreed = async (subBreed) => {
 
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import './_index.scss';
 </style>
