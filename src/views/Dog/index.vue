@@ -19,7 +19,7 @@
 
     <section v-else class="dog__detail">
       <div class="dog__detail-info">
-        <img class="dog__detail-img" :src="img" alt="breed dog" height="300" width="300">
+        <img class="dog__detail-img" :src="img" alt="breed dog" width="300">
         <div>
           <p>Hi i am a {{breed}} dog. Know more about me:</p>
 
