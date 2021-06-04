@@ -85,7 +85,7 @@ export default {
         if(info.subBreed){
           query.subBreed = info.value.subBreed
         }
-        router.push({ path: 'dog', query: query })
+        router.push({ name: 'dog', params: { id: 'profile'}, query: query })
       }
       emit('click')
     }
