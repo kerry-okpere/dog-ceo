@@ -3,7 +3,7 @@
 		<header class="home__header">
 			<div class="home__header-search">
 				<search v-model="search" @keydown.enter="handleSearch"/> 
-				<btn @click="refresh">Refresh</btn>
+				<btn @click="handleSearch(search)">Search</btn>
 			</div>
 			<div class="home__header-select">
 				<p>Sort By:</p>
@@ -22,6 +22,10 @@
 
 		<section v-else class="home__body">			
 			<div>
+				<div class="home__body-refresh">
+					<btn class="home__body-refresh-icon" shape="circle" @click="refresh"><refresh-icon/></btn>
+				</div>
+				
 				<div class="home__body-info">
 					<p>All Dogs</p>
 					<p class="text-gray-500 text-xs">{{dogs.length}} Dogs</p>
@@ -59,7 +63,7 @@ import Select from "/src/components/Select/index.vue";
 import Btn from "/src/components/Btn/index.vue";
 import Empty from "/src/components/Icons/dog-house.vue";
 import Signed from "/src/components/Signature/index.vue";
-
+import { RefreshIcon } from '@heroicons/vue/outline'
 
 // data
 const store = useStore()

@@ -38,9 +38,20 @@
   &__alert{
     @apply
       mx-auto
-      my-16;
+      mt-16 mb-12;
   }
   &__body{
+    &-refresh{
+      @apply
+      flex
+      justify-end;
+      &-icon{
+        @apply
+        h-10
+        w-10
+        ;
+      }
+    }
     &-info{
       @apply
       py-4
