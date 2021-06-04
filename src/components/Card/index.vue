@@ -12,7 +12,7 @@
 </template>
 <script>
 import { useRouter } from 'vue-router'
-import { ref, onMounted, computed, onUnmounted, onBeforeMount } from "vue";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import { getId } from '../../Utilities/index.js';
 import { useStore } from "vuex";
 

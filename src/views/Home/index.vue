@@ -49,7 +49,6 @@
 </template>
 
 <script setup>
-// import Header from "/src/components/Header/index.vue";
 import { useStore } from "vuex";
 import { computed, ref, onMounted, onBeforeMount } from "vue";
 import Alert from "/src/components/Alert/index.vue";
@@ -130,7 +129,10 @@ const fetchAll = () => {
 		handleFetch('fetchDogs'), handleFetch('fetchBreed')
 	]).finally(() => {
 			loading.value = false 
-			store.commit('SET_HAS_FETCHED', true)
+			store.commit('SET_STATES', {
+				key: 'hasFetched',
+				payload: true
+			})
 		})
 }
 
