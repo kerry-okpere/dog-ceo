@@ -11,7 +11,7 @@
     </header>
   
     <alert class="dog__alert" 
-      title="Please not that this API does not support querying by a specific dog Id. The only information it retrieves is the dog breed name or dog Image." />
+      title="Please note that this API does not support querying by a specific dog Id. The only information it retrieves is the dog breed name or dog Image." />
 
     <div v-if="isError.show">
       <alert class="dog__alert" variant="error" :title="isError.msg" />
