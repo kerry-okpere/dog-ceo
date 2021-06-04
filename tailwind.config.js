@@ -21,6 +21,9 @@ module.exports = {
       },
       maxWidth: {
         'small': '13rem'
+      },
+      inset: {
+      '-2': '-1rem',
       }
     },
   },
