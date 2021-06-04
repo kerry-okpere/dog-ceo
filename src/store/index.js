@@ -19,7 +19,6 @@ export default createStore({
     SET_STATES(state, data){
       const { key, payload } = data
       state[key] = payload
-      console.log(key, state[key])
     },
   },
   actions: {
