@@ -3,7 +3,7 @@
 		<header class="home__header">
 			<div class="home__header-search">
 				<search v-model="search" @keydown.enter="handleSearch"/> 
-				<btn @click="handleSearch(search)">Search</btn>
+				<btn @click="handleSearch">Search</btn>
 			</div>
 			<div class="home__header-select">
 				<p>Sort By:</p>
@@ -16,16 +16,15 @@
 
 		<alert class="home__alert" title="Kindly note that this API can only display a maximum of 50 random pictures at a time, It can display up to 100 Dog Images when you query by breed." />
 		
+		<div class="home__body-refresh">
+			<btn class="home__body-refresh-icon" shape="circle" @click="refresh"><refresh-icon/></btn>
+		</div>
 		<div v-if="isError.show" class="home__body-err">
 			<alert class="home__alert" variant="error" :title="isError.msg" />
 		</div>
 
 		<section v-else class="home__body">			
 			<div>
-				<div class="home__body-refresh">
-					<btn class="home__body-refresh-icon" shape="circle" @click="refresh"><refresh-icon/></btn>
-				</div>
-				
 				<div class="home__body-info">
 					<p>All Dogs</p>
 					<p class="text-gray-500 text-xs">{{dogs.length}} Dogs</p>
@@ -101,13 +100,13 @@ onMounted(() => {
 
 // methods
 const handleSearch = () => {
-	if(store.state.breed.name === search.value) return
+	if(store.state.breed.name === search.value.toLowerCase()) return
 
 	isError.value = {}
-	if(breed.value.includes(search.value)) {
-		selectedBreed.value = search.value
+	if(breed.value.includes(search.value.toLowerCase())) {
+		selectedBreed.value = search.value.toLowerCase()
 		
-		fetchByBreed(search.value)
+		fetchByBreed(search.value.toLowerCase())
 	}
 	else {
 		dogs.value = []
