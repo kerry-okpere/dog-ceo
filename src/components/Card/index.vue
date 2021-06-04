@@ -1,7 +1,7 @@
 <template>
   <figure @click="navigate" :class="['card', size === 'small' ? 'card__small': 'card__medium']">
     <div :class="['card__content', {'animate-pulse': !imgSrc}]">
-      <img class="card__content-img" :src="imgSrc" :alt="name" loading="lazy" ref="image" height="100" width="1000">
+      <img class="card__content-img" :src="imgSrc" :alt="alt" loading="lazy" ref="image" height="100" width="1000">
     </div>
     <figcaption class="card__title">
       <p :class="isClickable ? 'text-blue-500': 'text-gray-600'">
@@ -12,19 +12,21 @@
 </template>
 <script>
 import { useRouter } from 'vue-router'
-import { ref, onMounted, computed, onUnmounted } from "vue";
+import { ref, onMounted, computed, onUnmounted, onBeforeMount } from "vue";
+import { getId } from '../../Utilities/index.js';
+import { useStore } from "vuex";
 
 export default {
   props: {
-    info: {
-      type: Object,
-      required: true
+    lazy: {
+      type: Boolean,
+      default: true
     },
     img: {
       type: String,
       required: true,
     },
-    name:{
+    alt:{
       type: String,
     },
     isClickable: {
@@ -45,17 +47,24 @@ export default {
     const router = useRouter()
     const image = ref(null)
     const intersected = ref(false)
+    const info = ref({})
+    const store = useStore()
     
     // computed
     const imgSrc = computed(() => intersected.value ? props.img : '')
 
     // hooks
     onMounted(() => {
-      const observer = new IntersectionObserver(intersectionCallback)
-      observer.observe(image.value)
+      info.value = getId(props.img)
+      if(props.lazy){
+        const observer = new IntersectionObserver(intersectionCallback)
+        observer.observe(image.value)
+      }else{
+        intersected.value = true
+      }
     })
     onUnmounted(() => {
-      
+      // observer.disconnect()
     })
 
     // methods
@@ -70,12 +79,13 @@ export default {
     const navigate = () => {
       if(props.isClickable){
         let query = {
-          breed: props.info.breed,
+          breed: info.value.breed,
+          img: props.img,
         }
-        if(props.info.subBreed){
-          query.subBreed = props.info.subBreed
+        if(info.subBreed){
+          query.subBreed = info.value.subBreed
         }
-        router.push({ name: 'dog', params: {id: props.info.id}, query: query })
+        router.push({ path: 'dog', query: query })
       }
       emit('click')
     }
@@ -83,7 +93,8 @@ export default {
     return{
       navigate,
       image, 
-      imgSrc
+      imgSrc,
+      info
     }
   },
 }

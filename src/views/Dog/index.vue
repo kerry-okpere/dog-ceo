@@ -19,7 +19,7 @@
 
     <section v-else class="dog__detail">
       <div class="dog__detail-info">
-        <img class="dog__detail-img" :src="img" alt="breed dog">
+        <img class="dog__detail-img" :src="img" alt="breed dog" height="300" width="300">
         <div>
           <p>Hi i am a {{breed}} dog. Know more about me:</p>
 
@@ -43,8 +43,9 @@
           <p class="dog__others-heading">You might also like:</p>
           <div v-if="!isEmpty" class="dog__others-cardGroup">
             <Card class="dog__others-card" size="small" 
+            :lazy="false"
             :isClickable="false" :info="{breed: img.altText}" 
-            :img="img.url" :name="img.altText" 
+            :img="img.url" :alt="img.altText" 
             v-for="(img, i) in dogs" :key="i"/>
           </div>
           <div v-else>
@@ -58,7 +59,7 @@
 
 <script>
 import { useRoute } from 'vue-router'
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, onBeforeMount } from "vue";
 import { useStore } from "vuex";
 import { ArrowLeftIcon } from '@heroicons/vue/outline'
 import Loading from "/src/components/Loading/index.vue";
@@ -80,16 +81,12 @@ export default {
     const isError = ref({})
     const store = useStore()
     const isEmpty = ref(false)
-
+    const dogs = ref([])
+    const breeds = ref([]) 
     // computed property
-    const dogs = computed(() => store.state.dogs)
-    const breeds = computed(() => Object.keys(store.state.breed))
 
     const breed = computed(() => route.query.breed)
-    const img = computed(() => {
-      return route.query.subBreed ? `https://images.dog.ceo/breeds/${route.query.breed}-${route.query.subBreed}/${route.params.id}.jpg` 
-        : `https://images.dog.ceo/breeds/${route.query.breed}/${route.params.id}.jpg`
-    })
+    const img = computed(() => route.query.img)
     const info = computed(() => {
       let result = [
         {
@@ -107,33 +104,46 @@ export default {
     })
 
     // hooks
-    onMounted(() => {
-      handleFetch('fetchBreed')
-      handleFetch('fetchByBreed', { 
-        breed: route.query.breed, 
-        length: 5
-      })
+    onBeforeMount(() => {
+      if (store.state.breed.name !== route.query.breed) {
+
+        handleFetch('fetchByBreed', {
+          breed: route.query.breed ,
+          length: 5
+        }).then(() => loading.value = false)
+        
+      }else{
+        dogs.value = store.state.breed.dogs.slice(0, 5)
+      }
     })
 
     // methods 
-
     const handleFetch = (action, data) => {
-      loading.value = true
-
-      store.dispatch(action, data).then(res => {
-        loading.value = false
-
-        // after loading check if empty 
-        setTimeout(() => isEmpty.value = dogs.length, 3000);
-      }).catch(err => {
-        isError.value = {
-          show: true,
-          msg: 'We encountered an issue while fetch the data, Please check the breed or try again later.'
-        }
-        loading.value = false
+      isError.value = {}
+      return new Promise((resolve, reject) => {
+        store.dispatch(action, data).then(res => {
+          
+          if(action == 'fetchDogs') {
+            dogs.value = store.state.dogs
+          }
+          if(action == 'fetchByBreed') {
+            dogs.value = store.state.breed.dogs
+          }
+          if(action == 'fetchBySubBreed') {
+            dogs.value = store.state.subBreed.dogs
+          }
+          resolve()
+        }).catch(err => {
+          isError.value = {
+            show: true,
+            msg: 'We encountered an issue while fetch the data, Please try again later.'
+          }
+          reject()
+        })
       })
       
     }
+    
     return{
       loading,
       isError,

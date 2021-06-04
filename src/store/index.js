@@ -4,19 +4,37 @@ import axios from "axios";
 export default createStore({
   state: () => ({
     name: 'jo-blue',
+    hasFetched: false,
     dogs: [],
-    breed: [],
+    breed: {
+      name: '',
+      dogs: []
+    },
+    subBreed: {
+      name: '',
+      dogs: []
+    },
+    breedList: [],
   }),
   mutations: {
     SET_NAME(state, payload){
       state.name = payload
     },
+    SET_HAS_FETCHED(state, payload){
+      state.hasFetched = payload
+    },
     SET_DOG_LIST(state, payload){
       state.dogs = payload
     },
+    SET_STATE(state, payload){
+      const { key } = payload
+      delete payload.key
+      state[key] = payload
+    },
     SET_BREED_LIST(state, payload){
-      state.breed = payload
-    }
+      state.breedList = payload
+    },
+    
   },
   actions: {
     saveName({ commit }, data){
@@ -42,20 +60,28 @@ export default createStore({
         });
       })
     },
-    fetchByBreed({ commit }, data){
+    fetchByBreed({ commit, state }, data){
       return new Promise((resolve, reject) => {
         axios.get(`https://dog.ceo/api/breed/${data.breed}/images/random/${data.length}/alt`).then(response => {
-          commit('SET_DOG_LIST', response.data.message)
+          commit('SET_STATE', {
+            key: 'breed',
+            name: data.breed,
+            dogs: response.data.message
+          })
           resolve(response);
         }).catch(error => {
           reject(error);
         });
       })
     },
-    fetchBySubBreed({ commit }, data){
+    fetchBySubBreed({ commit, state }, data){
       return new Promise((resolve, reject) => {
         axios.get(`https://dog.ceo/api/breed/${data.breed}/${data.subBreed}/images/random/100/alt`).then(response => {
-          commit('SET_DOG_LIST', response.data.message)
+          commit('SET_STATE', {
+            key: 'subBreed',
+            name: data.subBreed,
+            dogs: response.data.message
+          })
           resolve(response);
         }).catch(error => {
           reject(error);

@@ -3,13 +3,13 @@
 		<header class="home__header">
 			<div class="home__header-search">
 				<search v-model="search" @keydown.enter="handleSearch"/> 
-				<btn @click="handleFetch('fetchDogs')">Refresh</btn>
+				<btn @click="refresh">Refresh</btn>
 			</div>
 			<div class="home__header-select">
 				<p>Sort By:</p>
 				<div>
 					<Select :modelValue="selectedBreed" @update:modelValue="fetchByBreed" :options="breed" title="Breed" class="home__header-selector"/>
-					<Select :modelValue="selectedSubBreed" @update:modelValue="fetchBySubBreed" :options="subBreed" title="Sub Breed" class="home__header-selector"/>
+					<Select :err="subBreed && subBreed.length ? '': 'No sub breed available'" :modelValue="selectedSubBreed" @update:modelValue="fetchBySubBreed" :options="subBreed" title="Sub Breed" class="home__header-selector"/>
 				</div>
 			</div>
 		</header>
@@ -32,8 +32,8 @@
 				</loading>
 				
 				<div v-else>
-					<div v-if="!isEmpty" class="home__body-dogs">
-						<Card :info="getId(img.url)" :img="img.url" :name="img.altText" v-for="(img, i) in dogs" :key="i"/>
+					<div v-if="!!dogs.length" class="home__body-dogs">
+						<Card :img="img.url" :alt="img.altText" v-for="(img, i) in dogs" :key="i"/>
 					</div>
 					<div v-else class="home__body-empty">
 						<empty class="home__body-empty-icon"/>
@@ -51,7 +51,7 @@
 <script setup>
 // import Header from "/src/components/Header/index.vue";
 import { useStore } from "vuex";
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, onBeforeMount } from "vue";
 import Alert from "/src/components/Alert/index.vue";
 import Loading from "/src/components/Loading/index.vue";
 import Card from "/src/components/Card/index.vue";
@@ -59,7 +59,6 @@ import Search from "/src/components/Search/index.vue";
 import Select from "/src/components/Select/index.vue";
 import Btn from "/src/components/Btn/index.vue";
 import Empty from "/src/components/Icons/dog-house.vue";
-import { getId } from '../../Utilities/index.js';
 import Signed from "/src/components/Signature/index.vue";
 
 
@@ -70,76 +69,118 @@ const isError = ref(false)
 const search = ref('')
 const selectedBreed = ref('')
 const selectedSubBreed = ref('')
-const isEmpty = ref(false)
+const dogs = ref([])
 
-// computed property
-const dogs = computed({
-	get: () => store.state.dogs,
-	set: val => store.commit('SET_DOG_LIST', val)
+const breedDogs = computed(() => store.state.breed.dogs)
+const subBreedDogs = computed(() => store.state.subBreed.dogs)
+
+const breed = computed({
+	get: () => Object.keys(store.state.breedList),
+	set: val => Object.keys(val)
 })
-
-const breed = computed(() => Object.keys(store.state.breed))
 const subBreed = computed(() => {
-	return  store.state.breed[selectedBreed.value]
+	return  store.state.breedList[selectedBreed.value]
 })
 
 // hooks
+onBeforeMount(() => {
+	if (!store.state.hasFetched) {
+		fetchAll()
+	}else{
+		dogs.value = store.state.dogs
+		breed.value = store.state.breedList
+	}
+})
 onMounted(() => {
-	handleFetch('fetchDogs')
-	handleFetch('fetchBreed')
+	store.state.breed.name = ''
+	store.state.breed.dogs = []
 })
 
 // methods
 const handleSearch = () => {
+	if(store.state.breed.name === search.value) return
+
+	isError.value = {}
 	if(breed.value.includes(search.value)) {
 		selectedBreed.value = search.value
+		
 		fetchByBreed(search.value)
 	}
 	else {
 		dogs.value = []
 		isError.value = {
 			show: true,
-			msg: 'We could find any dog under this breed, Please try again.'
+			msg: 'We couldn\'t find any dog under this breed, Please try again.'
 		}
 	}
 }
+const refresh = () => {
+	fetchAll()
+	search.value = ''
+	selectedBreed.value = selectedSubBreed.value = ''
+	store.state.breed = store.state.subBreed = {
+		name: '',
+    dogs: []
+	}
+}
+
+const fetchAll = () => {
+	loading.value = true
+	Promise.all([
+		handleFetch('fetchDogs'), handleFetch('fetchBreed')
+	]).finally(() => {
+			loading.value = false 
+			store.commit('SET_HAS_FETCHED', true)
+		})
+}
 
 const handleFetch = (action, data) => {
-	loading.value = true
+	isError.value = {}
 
-	store.dispatch(action, data).then(res => {
-		loading.value = false
-
-		// after loading check if empty 
-		setTimeout(() => isEmpty.value = dogs.length, 3000);
-	}).catch(err => {
-		isError.value = {
-			show: true,
-			msg: 'We encountered an issue while fetch the data, Please try again later.'
-		}
-		loading.value = false
+	return new Promise((resolve, reject) => {
+		store.dispatch(action, data).then(res => {
+			if(action == 'fetchDogs') {
+				dogs.value = store.state.dogs
+			}
+			if(action == 'fetchByBreed') {
+				dogs.value = store.state.breed.dogs
+			}
+			if(action == 'fetchBySubBreed') {
+				dogs.value = store.state.subBreed.dogs
+			}
+			resolve()
+		}).catch(err => {
+			isError.value = {
+				show: true,
+				msg: 'We encountered an issue while fetch the data, Please try again later.'
+			}
+			reject()
+		})
 	})
+	
 }
 
 const fetchByBreed = async (breed) => {
 	selectedBreed.value = breed
 
+	loading.value = true
 	handleFetch('fetchByBreed', {
 		breed: selectedBreed.value ,
 		length: 100
-	})
+	}).then(() => loading.value = false)
+
 }
 
 const fetchBySubBreed = async (subBreed) => {
 	selectedSubBreed.value = subBreed
 
+	loading.value = true
+	
 	handleFetch('fetchBySubBreed', {
-		breed: selectedBreed.value, 
+		breed: selectedBreed.value ,
 		subBreed: subBreed
-	})
+	}).then(() => loading.value = false)
 }
-
-
 </script>
 
 <style lang="scss" scoped>
